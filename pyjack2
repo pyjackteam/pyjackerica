@@ -1,0 +1,44 @@
+from random import randintimport random import timefrom tkinter import*import tkinter as tkimport osimport sysimport copy
+global newDeck
+root = Tk()root.title("PYJACK")root.geometry("1000x900")
+# 배경 이미지bg_img = PhotoImage(file="texture/pyjacktable.png")d_img = PhotoImage(file="texture/ironman.png")
+# 카드 이미지 bkcard = PhotoImage(file="texture/card/4c.gif")
+# 프레임 설정frame1 =Frame(root,bg="black")frame1.pack(fill=X,ipadx=0,ipady=0,side=RIGHT)
+frame2 =Frame(root,bg="black")frame2.pack(fill=BOTH,ipadx=100,ipady=0)
+frame3 =Frame(root,bg="black")frame3.pack(fill=Y,ipadx=0,ipady=0)
+frame4 =Frame(root,bg="black")frame4.pack(fill=BOTH,ipadx=100,ipady=320)
+# 이미지 삽입dealer = Label(frame2,image=d_img,bg='black')dealer.pack()pyjack_bgi = Label(frame3,image = bg_img, bg='black')pyjack_bgi.pack()bk_card = Label(frame3,image=bkcard)bk_card.place(x=500,y=300)
+# 텍스트 창1text1 =Text(frame1,width=40,height=10,bg='black',fg='white')text1.grid(row=1,column=0,pady=0)  
+# 텍스트 창2text =Text(frame1,width=40,height=10,bg='black',fg='white')text.grid(row=2,column=0,pady=0)
+# 버튼 설정b_hit = Button(frame4, text="HiT",width=20)b_hit.grid(row=1,column=0,padx=45,ipady=0)
+b_stay = Button(frame4, text="STAY", width=20)b_stay.grid(row=1,column=1,padx=45,ipady=0)
+b_replay = Button(frame4, text="REPLAY", width=20)b_replay.grid(row=1,column=2,padx=45,ipady=0)
+b_play = Button(frame4, text="PLAY", width=20)b_play.grid(row=2,column=1,pady=30,ipady=0)
+global filename
+class deck(object):    deck1={'s':13,'c':13,'h':13,'d':13}    deck2={1:'s',2:'c',3:'h',4:'d'}    deck3={1:"a", 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:10, 11:"j", 12:"q", 13:"k" }
+            def __init__(self):        text.insert(END,"\nDeck was shuffled!")
+    def getCard(self):
+        global deck1        global deck2        global deck3
+        i=randint(1,4)        j=randint(1,13)                 if self.deck1[self.deck2[i]] != 0:            self.Filename(self.deck3[j],self.deck2[i])            self.deck1[self.deck2[i]] -= 1                        return self.deck3[j]        else:            return self.getCard()
+    def Filename(self,x,y):        global filename        str_x =str(x)        str_y =str(y)
+        filename ="texture/card/"+ str_x + str_y +".gif"        return filename    #print(filename)    #print(type(filename))
+    def cardview(self):        global filename        print(filename)        drawcard = PhotoImage(file=filename)        viewer = Label(frame3,image=drawcard)        viewer.place(x=100,y=100)    
+
+    def cardValue(card):      global playerTotal   cardsDict={"a":1 , 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:10, "j":10, "q":10, "k":10 }   if card=="a":      if playerTotal<=10:         return 11      else:         return 1   else:      return cardsDict[card]
+
+def hit(event):      global newDeck      global playerTotal      global flag1      global flag2            card=newDeck.getCard()      ####       playerTotal=playerTotal+ cardValue(card)            text.insert(END,"\nYour Card: "+str(card))            if playerTotal >21:                  text.insert(END,"\nYou Lose! \nPress Replay to play again")         flag1=False      elif playerTotal==21:         #give control to the computer, if he busts you win                  flag2=True      else:                  action()
+def replay(event):   main()
+def action():   global playerTotal   global newDeck   global flag1   global flag2         playerAction=text.insert(END,"\nDo you hit or stay?")   
+def stay(event):   global flag1   global flag2   global cardValue   global computerTotal   global card    if flag1:            text.insert(END,"\nDealer's Second Card: "+str(card))      while(computerTotal<21):         card=newDeck.getCard()         computerTotal+=cardValue(card)                           text.insert(END,"\nDealer's Card: "+str(card))                  if computerTotal>playerTotal and computerTotal<21:                        text.insert(END,"\nYou lose!\nPress Replay to play again")            break                  if computerTotal==21:            if flag2:                              text.insert(END,"\nIts a draw!\nPress Replay to play again")            else:                              text.insert(END,"\nYou Lose!\nPress Replay to play again")
+         elif computerTotal> 21:                        text.insert(END,"\nYou Win!\nPress Replay to play again")
+def main():   global newDeck   global flag1   global flag2   global card   global playerTotal   global computerTotal   global deck1   global filename
+      text.delete('1.0',END)   text.insert(END,"\nShuffling Deck...")      newDeck=deck()   flag1, flag2= True, False   playerTotal, computerTotal=0,0
+      text.insert(END,"\nPlayer gets following cards")   card=newDeck.getCard()   newDeck.cardview()
+   text.insert(END,"\nFirst card: "+ str(card))   playerTotal=playerTotal+ cardValue(card)   card=newDeck.getCard()   
+   text.insert(END,"\nSecond Card: "+ str(card))   playerTotal=playerTotal+ cardValue(card)   card=newDeck.getCard()   
+   text.insert(END,"\nDealer's First Card: "+ str(card))   computerTotal+= cardValue(card)   card=newDeck.getCard()   computerTotal+= cardValue(card)
+   action()   
+if __name__=='__main__':   pass
+def play(event):   main()
+b_hit.bind("<Button-1>",hit)b_stay.bind("<Button-1>",stay)b_replay.bind("<Button-1>",replay)b_play.bind("<Button-1>",play)root.configure(bg = "black")
+root.mainloop()
